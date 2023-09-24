@@ -34,11 +34,10 @@ fn init_directory_structure() {
     println!("Successfully initialized directories")
 }
 
-fn init_config(game_version: String, server_mod_loader: ModLoader, client_mod_loader: ModLoader) -> Result<()> {
+fn init_config(game_version: String, mod_loader: ModLoader) -> Result<()> {
     let config = AppConfig {
         game_version,
-        client_mod_loader,
-        server_mod_loader,
+        mod_loader,
         mods: vec![],
     };
 
@@ -50,7 +49,7 @@ fn init_config(game_version: String, server_mod_loader: ModLoader, client_mod_lo
     Ok(())
 }
 
-pub fn init_all(game_version: String, server_mod_loader: ModLoader, client_mod_loader: ModLoader) {
+pub fn init_all(game_version: String, mod_loader: ModLoader) {
     init_directory_structure();
-    init_config(game_version, server_mod_loader, client_mod_loader).expect("Failed to create config file");
+    init_config(game_version, mod_loader).expect("Failed to create config file");
 }

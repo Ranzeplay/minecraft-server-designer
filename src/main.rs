@@ -3,14 +3,17 @@ use crate::init::init_all;
 use crate::viewmodel::startup_args::{Commands, ModCommand, StartupArgs};
 
 use anyhow::Result;
+use crate::build_command::build_all;
 use crate::mod_command::add_mod;
+
+#[cfg(test)]
+mod test;
 
 mod viewmodel;
 mod init;
 mod downloader;
-#[cfg(test)]
-mod test;
 mod mod_command;
+mod build_command;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -28,13 +31,14 @@ async fn main() -> Result<()> {
             }
 
 
-            init_all(param.game_version, param.client_mod_loader, param.server_mod_loader);
+            init_all(param.game_version, param.mod_loader);
         }
         Commands::Mod(param) => {
             match param {
                 ModCommand::Add(mod_to_add) => add_mod(mod_to_add)
             }
         }
+        Commands::Build => build_all().await?
     }
 
     Ok(())

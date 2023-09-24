@@ -25,6 +25,8 @@ pub async fn download_modrinth_mod(metadata: ModrinthModMetadata) -> anyhow::Res
                     let download_url = file_entry["url"].as_str().unwrap();
                     let name = file_entry["filename"].as_str().unwrap();
 
+                    println!("Mod {} is available", metadata.name);
+
                     // Download files
                     let file_content = reqwest::get(download_url)
                         .await?
@@ -56,10 +58,14 @@ pub async fn download_modrinth_mod(metadata: ModrinthModMetadata) -> anyhow::Res
                     }
 
                     tokio::fs::remove_file(download_path).await?;
+
+                    return Ok(());
                 }
             }
         }
     }
+
+    println!("No matching version for mod {}", metadata.name);
 
     Ok(())
 }

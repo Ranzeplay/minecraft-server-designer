@@ -4,8 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct AppConfig {
     pub game_version: String,
-    pub client_mod_loader: ModLoader,
-    pub server_mod_loader: ModLoader,
+    pub mod_loader: ModLoader,
     pub mods: Vec<ModMetadata>
 }
 

@@ -15,16 +15,16 @@ pub enum Commands {
     #[command(subcommand)]
     #[clap(about = "Manage mods used in the server and client")]
     Mod(ModCommand),
+    #[clap(about = "Build current configuration")]
+    Build
 }
 
 #[derive(Args, Debug)]
 pub struct InitCommand {
     #[arg(short, long, default_value = "latest")]
     pub game_version: String,
-    #[arg(short, long, default_value = "vanilla")]
-    pub server_mod_loader: ModLoader,
-    #[arg(short, long, default_value = "vanilla")]
-    pub client_mod_loader: ModLoader,
+    #[arg(short = 'l', long, default_value = "vanilla")]
+    pub mod_loader: ModLoader,
 }
 
 #[derive(Subcommand, Debug)]
