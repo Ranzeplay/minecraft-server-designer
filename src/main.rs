@@ -1,14 +1,16 @@
 use clap::Parser;
 use crate::init::init_all;
-use crate::viewmodel::startup_args::{Commands, StartupArgs};
+use crate::viewmodel::startup_args::{Commands, ModCommand, StartupArgs};
 
 use anyhow::Result;
+use crate::mod_command::add_mod;
 
 mod viewmodel;
 mod init;
 mod downloader;
 #[cfg(test)]
 mod test;
+mod mod_command;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -28,9 +30,12 @@ async fn main() -> Result<()> {
 
             init_all(param.game_version, param.client_mod_loader, param.server_mod_loader);
         }
+        Commands::Mod(param) => {
+            match param {
+                ModCommand::Add(mod_to_add) => add_mod(mod_to_add)
+            }
+        }
     }
-
-    println!("Hello, world!");
 
     Ok(())
 }

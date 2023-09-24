@@ -38,13 +38,13 @@ pub struct ModMetadata {
     pub sides: Vec<ModTargetSide>
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum)]
 pub enum ModProvider {
     Modrinth,
     CurseForge
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum)]
 pub enum ModTargetSide {
     Client,
     Server
