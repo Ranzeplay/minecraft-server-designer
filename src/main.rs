@@ -7,6 +7,8 @@ use anyhow::Result;
 mod viewmodel;
 mod init;
 mod downloader;
+#[cfg(test)]
+mod test;
 
 #[tokio::main]
 async fn main() -> Result<()> {

@@ -10,16 +10,28 @@ fn init_directory_structure() {
         .expect("Failed to get current directory");
 
     // Create server directory
-    fs::create_dir(dir.clone().join("server"))
+    fs::create_dir_all(dir.clone().join("server"))
         .expect("Failed to create server directory");
 
     // Create mods directory
-    fs::create_dir(dir.clone().join("mods"))
+    fs::create_dir_all(dir.clone().join("mods"))
+        .expect("Failed to create server directory");
+
+    // Create mods temp directory
+    fs::create_dir_all(dir.clone().join("mods").join("downloading"))
+        .expect("Failed to create server directory");
+
+    // Create mods directory for target sides
+    fs::create_dir_all(dir.clone().join("mods").join("server"))
+        .expect("Failed to create server directory");
+    fs::create_dir_all(dir.clone().join("mods").join("client"))
         .expect("Failed to create server directory");
 
     // Create client directory
-    fs::create_dir(dir.clone().join("client"))
+    fs::create_dir_all(dir.clone().join("client"))
         .expect("Failed to create server directory");
+
+    println!("Successfully initialized directories")
 }
 
 fn init_config(game_version: String, server_mod_loader: ModLoader, client_mod_loader: ModLoader) -> Result<()> {

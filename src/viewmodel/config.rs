@@ -17,6 +17,17 @@ pub enum ModLoader {
     Forge
 }
 
+impl ModLoader {
+    pub fn to_string(&self) -> &str {
+        return match &self {
+            ModLoader::Vanilla => "vanilla",
+            ModLoader::Fabric => "fabric",
+            ModLoader::Spigot => "spigot",
+            ModLoader::Forge => "forge",
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct ModMetadata {
     pub name: String,
