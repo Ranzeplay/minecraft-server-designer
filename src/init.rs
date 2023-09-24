@@ -1,6 +1,4 @@
 use std::{env, fs};
-use std::fs::File;
-use std::io::Write;
 use crate::viewmodel::config::{AppConfig, ModLoader};
 
 use anyhow::Result;
@@ -41,12 +39,7 @@ fn init_config(game_version: String, mod_loader: ModLoader) -> Result<()> {
         mods: vec![],
     };
 
-    let content = serde_yaml::to_string(&config)?;
-    let path = env::current_dir().unwrap().join("config.yml");
-    let mut file = File::create(path)?;
-    file.write_all(content.as_bytes())?;
-
-    Ok(())
+    config.save()
 }
 
 pub fn init_all(game_version: String, mod_loader: ModLoader) {

@@ -1,3 +1,6 @@
+use std::{env, fs};
+use std::fs::File;
+use std::io::Write;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
@@ -6,6 +9,26 @@ pub struct AppConfig {
     pub game_version: String,
     pub mod_loader: ModLoader,
     pub mods: Vec<ModMetadata>
+}
+
+impl AppConfig {
+    pub fn load() -> AppConfig {
+        let config_path = &env::current_dir().unwrap().join("config.yml");
+        let config_content = fs::read_to_string(config_path)
+            .expect("Failed to read config file");
+
+        return serde_yaml::from_str::<AppConfig>(&*config_content)
+            .expect("Failed to parse config file");
+    }
+
+    pub fn save(&self) -> anyhow::Result<()> {
+        let content = serde_yaml::to_string(&self)?;
+        let path = env::current_dir().unwrap().join("config.yml");
+        let mut file = File::create(path)?;
+        file.write_all(content.as_bytes())?;
+
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum)]

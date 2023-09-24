@@ -1,19 +1,13 @@
-use std::{env, fs};
 use crate::downloader::modrinth_mod_downloader::{download_modrinth_mod, ModrinthModMetadata};
 use crate::viewmodel::config::{AppConfig, ModProvider};
 
 pub async fn build_all() -> anyhow::Result<()> {
     build_mods().await?;
-
     Ok(())
 }
 
 async fn build_mods() -> anyhow::Result<()> {
-    let config_path = &env::current_dir().unwrap().join("config.yml");
-    let config_content = fs::read_to_string(config_path)
-        .expect("Failed to read config file");
-
-    let config = serde_yaml::from_str::<AppConfig>(&*config_content).unwrap();
+    let config = AppConfig::load();
 
     for mc_mod in config.mods {
         let game_version = config.game_version.clone();
