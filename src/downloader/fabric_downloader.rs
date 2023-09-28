@@ -6,7 +6,7 @@ use tokio::process::Command;
 use crate::downloader::vanilla_downloader::download_vanilla_server;
 
 pub async fn download_fabric_server(game_version: String) -> anyhow::Result<()> {
-    println!("Downloading Fabric server")
+    println!("Downloading Fabric server");
     let fabric_metadata_response = reqwest::get("https://maven.fabricmc.net/net/fabricmc/fabric-installer/maven-metadata.xml")
         .await?
         .text()
