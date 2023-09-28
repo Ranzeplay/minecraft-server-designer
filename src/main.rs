@@ -3,6 +3,7 @@ use crate::init::init_all;
 use crate::viewmodel::startup_args::{Commands, ModCommand, StartupArgs};
 
 use anyhow::Result;
+use java_locator::locate_java_home;
 use crate::build_command::build_all;
 use crate::mod_command::add_mod;
 
@@ -18,6 +19,10 @@ mod build_command;
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = StartupArgs::parse();
+
+    // Check Java installation
+    locate_java_home()
+        .expect("Failed to locate Java");
 
     match args.command {
         Commands::Init(mut param) => {
