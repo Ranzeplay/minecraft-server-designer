@@ -71,3 +71,30 @@ pub enum ModTargetSide {
     Client,
     Server
 }
+
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+pub struct ModLock {
+    pub mod_id: String,
+    pub version: String,
+    pub url: String
+}
+
+impl ModLock {
+    pub fn load() -> Vec<ModLock> {
+        let file_path = &env::current_dir().unwrap().join("download.lock");
+        let content = fs::read_to_string(file_path)
+            .expect("Failed to read lock file");
+
+        return serde_yaml::from_str::<Vec<ModLock>>(&*content)
+            .expect("Failed to parse config file");
+    }
+
+    pub fn save(data: &Vec<ModLock>) -> anyhow::Result<()> {
+        let content = serde_yaml::to_string(data)?;
+        let path = env::current_dir().unwrap().join("download.lock");
+        let mut file = File::create(path)?;
+        file.write_all(content.as_bytes())?;
+
+        Ok(())
+    }
+}
