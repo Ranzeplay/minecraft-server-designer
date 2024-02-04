@@ -1,10 +1,11 @@
 use colored::Colorize;
-use tokio_util::task::TaskTracker;
+use tokio::task;
 
 use crate::downloader::fabric_downloader::download_fabric_server;
 use crate::downloader::modrinth_mod_downloader::{download_modrinth_mod, ModrinthModMetadata};
 use crate::downloader::vanilla_downloader::download_vanilla_server;
 use crate::viewmodel::config::{AppConfig, ModLoader, ModProvider};
+use crate::viewmodel::download_result::DownloadStatus;
 
 pub async fn build_all(skip_server: bool, force_mods: bool) -> anyhow::Result<()> {
     build_mods(force_mods).await?;
@@ -34,7 +35,7 @@ async fn build_mods(force: bool) -> anyhow::Result<()> {
     let config = AppConfig::load();
 
     println!("{}", "Downloading mods".bold());
-    let tracker = TaskTracker::new();
+    let mut handles = vec![];
     for mc_mod in config.mods {
         let game_version = config.game_version.clone();
         let mod_loader = config.mod_loader.clone();
@@ -49,14 +50,27 @@ async fn build_mods(force: bool) -> anyhow::Result<()> {
                     game_version,
                     sides: mc_mod.sides,
                 };
-                tracker.spawn(download_modrinth_mod(metadata, false));
+                handles.push(task::spawn(download_modrinth_mod(metadata, force)));
             }
             ModProvider::CurseForge => unimplemented!("Feature not implemented yet")
         }
     }
 
-    tracker.close();
-    tracker.wait().await;
+    let mut results = vec![];
+    for handle in handles {
+        let result = handle.await?;
+        results.push(result.expect("Unexpected error when unpacking download result"));
+    }
+
+    println!("{}", "Summary".bold());
+    println!("Total: {} | Downloaded: {} | Failed: {} | Skipped: {}",
+             results.len(),
+             results.iter().filter(|r| r.status == DownloadStatus::Downloaded).count(),
+             results.iter().filter(|r| r.status == DownloadStatus::Failed).count(),
+             results.iter().filter(|r| r.status == DownloadStatus::Skipped).count());
+    for failed_mod in results.iter().filter(|r| r.status == DownloadStatus::Failed) {
+        println!("{}: {}", failed_mod.name.red(), failed_mod.description);
+    }
 
     Ok(())
 }

@@ -1,10 +1,10 @@
 use std::env;
-
 use colored::Colorize;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
 use crate::viewmodel::config::{ModLoader, ModTargetSide};
+use crate::viewmodel::download_result::{DownloadResult, DownloadStatus};
 
 pub struct ModrinthModMetadata {
     pub name: String,
@@ -15,7 +15,7 @@ pub struct ModrinthModMetadata {
     pub sides: Vec<ModTargetSide>,
 }
 
-pub async fn download_modrinth_mod(metadata: ModrinthModMetadata, force: bool) -> anyhow::Result<()> {
+pub async fn download_modrinth_mod(metadata: ModrinthModMetadata, force: bool) -> anyhow::Result<DownloadResult> {
     // let begin_text = format!("Downloading mod {}", metadata.name);
     // println!("{}", begin_text.black());
     let response = reqwest::get(format!("https://api.modrinth.com/v2/project/{}/version?loaders=[\"{}\"]&game_versions=[\"{}\"]", metadata.mod_id, metadata.mod_loader.to_string(), metadata.game_version))
@@ -37,7 +37,12 @@ pub async fn download_modrinth_mod(metadata: ModrinthModMetadata, force: bool) -
                     if check_availability(&metadata, name) && !force {
                         let exist_text = format!("Mod file of {} already exists", metadata.name);
                         println!("{}", exist_text.green());
-                        return Ok(());
+
+                        return Ok(DownloadResult {
+                            name: metadata.name.clone(),
+                            status: DownloadStatus::Skipped,
+                            description: "Skipped due to existing file",
+                        });
                     }
 
                     let download_path = &env::current_dir().unwrap()
@@ -75,7 +80,11 @@ pub async fn download_modrinth_mod(metadata: ModrinthModMetadata, force: bool) -
                     let finish_text = format!("Finished downloading mod {}", metadata.name);
                     println!("{}", finish_text.green());
 
-                    return Ok(());
+                    return Ok(DownloadResult {
+                        name: metadata.name.clone(),
+                        description: "Successfully downloaded mod file",
+                        status: DownloadStatus::Downloaded,
+                    });
                 }
             }
         }
@@ -84,7 +93,11 @@ pub async fn download_modrinth_mod(metadata: ModrinthModMetadata, force: bool) -
     let no_match_text = format!("No matching version for mod {}", metadata.name);
     println!("{}", no_match_text.red());
 
-    Ok(())
+    Ok(DownloadResult {
+        name: metadata.name.clone(),
+        description: "Version mismatch",
+        status: DownloadStatus::Failed,
+    })
 }
 
 fn check_availability(metadata: &ModrinthModMetadata, filename: &str) -> bool {
