@@ -3,9 +3,11 @@ use crate::viewmodel::config::{AppConfig, ModLoader};
 
 use anyhow::Result;
 
-fn init_directory_structure() {
+pub fn init_directory_structure() {
     let dir = env::current_dir()
         .expect("Failed to get current directory");
+
+    println!("Current directory: {:?}", dir);
 
     // Create server directory
     fs::create_dir_all(dir.clone().join("server"))

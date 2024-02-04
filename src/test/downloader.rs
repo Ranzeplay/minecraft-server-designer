@@ -14,7 +14,7 @@ pub async fn modrinth_download_test() -> anyhow::Result<()> {
         sides: vec![ModTargetSide::Server, ModTargetSide::Client],
     };
 
-    download_modrinth_mod(model).await
+    download_modrinth_mod(model, false).await
 }
 
 #[tokio::test]

@@ -43,7 +43,7 @@ async fn main() -> Result<()> {
                 ModCommand::Add(mod_to_add) => add_mod(mod_to_add)
             }
         }
-        Commands::Build => build_all().await?
+        Commands::Build(x) => build_all(x.skip_server, x.force_download).await?
     }
 
     Ok(())

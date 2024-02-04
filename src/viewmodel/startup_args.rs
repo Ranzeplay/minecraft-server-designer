@@ -16,7 +16,7 @@ pub enum Commands {
     #[clap(about = "Manage mods used in the server and client")]
     Mod(ModCommand),
     #[clap(about = "Build current configuration")]
-    Build
+    Build(BuildCommand)
 }
 
 #[derive(Args, Debug)]
@@ -47,4 +47,12 @@ pub struct AddModCommand {
     pub provider: ModProvider,
     #[arg(short, long, required = true, help = "Which side should the mod be installed on")]
     pub side: Vec<ModTargetSide>
+}
+
+#[derive(Args, Debug)]
+pub struct BuildCommand {
+    #[arg(short, long, help = "Skip re-downloading server files even if they don't exist", default_value_t = false)]
+    pub skip_server: bool,
+    #[arg(short, long, help = "Skip re-downloading mod files if they already exist", default_value_t = false)]
+    pub force_download: bool
 }
