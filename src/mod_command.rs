@@ -1,5 +1,5 @@
-use crate::viewmodel::config::{AppConfig, ModMetadata};
-use crate::viewmodel::startup_args::AddModCommand;
+use crate::models::config::{AppConfig, ModMetadata};
+use crate::models::startup_args::AddModCommand;
 
 pub fn add_mod(mod_to_add: AddModCommand) {
     let mut config = AppConfig::load();

@@ -1,4 +1,4 @@
-use crate::viewmodel::config::{ModLoader, ModTargetSide};
+use crate::models::config::{ModLoader, ModTargetSide};
 
 pub struct DownloadModMetadata {
     pub name: String,

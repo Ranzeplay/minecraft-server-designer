@@ -2,8 +2,8 @@ use colored::Colorize;
 use crate::CURSEFORGE_API_TOKEN;
 
 use crate::downloader::universal_downloader::download_file;
-use crate::viewmodel::download_mod_metadata::DownloadModMetadata;
-use crate::viewmodel::download_result::{DownloadResult, DownloadStatus};
+use crate::models::download_mod_metadata::DownloadModMetadata;
+use crate::models::download_result::{DownloadResult, DownloadStatus};
 
 pub async fn download_curseforge_mod(
     metadata: DownloadModMetadata,
@@ -22,7 +22,7 @@ pub async fn download_curseforge_mod(
         0,
         1
     );
-    
+
     let response = client
         .get(format!(
             "https://api.curseforge.com/v1/mods/{}/files?{}",
@@ -34,7 +34,7 @@ pub async fn download_curseforge_mod(
         .await?
         .json::<serde_json::Value>()
         .await?;
-    
+
     let entries = response["data"].as_array().unwrap();
     if entries.is_empty() {
         return Ok(DownloadResult {
@@ -43,7 +43,7 @@ pub async fn download_curseforge_mod(
             status: DownloadStatus::Failed,
         });
     }
-    
+
     let file_entry = entries.get(0).unwrap();
 
     let download_url = file_entry["downloadUrl"].as_str().unwrap();

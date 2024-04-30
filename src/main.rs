@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 use clap::Parser;
 use crate::init::init_all;
-use crate::viewmodel::startup_args::{Commands, ModCommand, StartupArgs};
+use crate::models::startup_args::{Commands, ModCommand, StartupArgs};
 
 use anyhow::Result;
 use java_locator::locate_java_home;
@@ -12,7 +12,7 @@ use crate::mod_command::add_mod;
 #[cfg(test)]
 mod test;
 
-mod viewmodel;
+mod models;
 mod init;
 mod downloader;
 mod mod_command;
