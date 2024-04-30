@@ -39,7 +39,7 @@ fn init_config(game_version: String, mod_loader: ModLoader) -> Result<()> {
         game_version,
         mod_loader,
         mods: vec![],
-        curse_api_key: "".to_string(),
+        curse_api_key: "xxx".to_string(),
     };
 
     config.save()

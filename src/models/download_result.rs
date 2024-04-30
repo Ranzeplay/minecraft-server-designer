@@ -1,5 +1,5 @@
 use colored::Colorize;
-use crate::downloader::universal_downloader::UniversalDownloadResult;
+use crate::universal_downloader::UniversalDownloadResult;
 
 pub struct DownloadResult {
     pub name: String,

@@ -17,6 +17,8 @@ mod init;
 mod downloader;
 mod mod_command;
 mod build_command;
+mod providers;
+mod universal_downloader;
 
 lazy_static! {
     pub static ref CURSEFORGE_API_TOKEN: Mutex<String> = Mutex::new(String::new());
@@ -45,7 +47,7 @@ async fn main() -> Result<()> {
         }
         Commands::Mod(param) => {
             match param {
-                ModCommand::Add(mod_to_add) => add_mod(mod_to_add)
+                ModCommand::Add(mod_to_add) => add_mod(mod_to_add).await?
             }
         }
         Commands::Build(x) => build_all(x.skip_server, x.force_download).await?

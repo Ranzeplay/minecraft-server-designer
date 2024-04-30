@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::Write;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
+use crate::CURSEFORGE_API_TOKEN;
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct AppConfig {
@@ -17,9 +18,13 @@ impl AppConfig {
         let config_path = &env::current_dir().unwrap().join("config.yml");
         let config_content = fs::read_to_string(config_path)
             .expect("Failed to read config file");
-
-        return serde_yaml::from_str::<AppConfig>(&*config_content)
+        
+        let parsed_config: AppConfig = serde_yaml::from_str(&config_content)
             .expect("Failed to parse config file");
+
+        *CURSEFORGE_API_TOKEN.lock().unwrap() = parsed_config.curse_api_key.clone();
+        
+        return parsed_config;
     }
 
     pub fn save(&self) -> anyhow::Result<()> {
