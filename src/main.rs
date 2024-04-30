@@ -1,9 +1,11 @@
+use std::sync::Mutex;
 use clap::Parser;
 use crate::init::init_all;
 use crate::viewmodel::startup_args::{Commands, ModCommand, StartupArgs};
 
 use anyhow::Result;
 use java_locator::locate_java_home;
+use lazy_static::lazy_static;
 use crate::build_command::build_all;
 use crate::mod_command::add_mod;
 
@@ -15,6 +17,10 @@ mod init;
 mod downloader;
 mod mod_command;
 mod build_command;
+
+lazy_static! {
+    pub static ref CURSEFORGE_API_TOKEN: Mutex<String> = Mutex::new(String::new());
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -34,7 +40,6 @@ async fn main() -> Result<()> {
 
                 param.game_version = versions["latest"]["release"].as_str().unwrap().to_string();
             }
-
 
             init_all(param.game_version, param.mod_loader);
         }

@@ -617,6 +617,7 @@ dependencies = [
  "clap",
  "colored",
  "java-locator",
+ "lazy_static",
  "reqwest",
  "serde",
  "serde_json",
