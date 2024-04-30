@@ -4,11 +4,12 @@ use std::io::Write;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct AppConfig {
     pub game_version: String,
     pub mod_loader: ModLoader,
-    pub mods: Vec<ModMetadata>
+    pub mods: Vec<ModMetadata>,
+    pub curse_api_key: String,
 }
 
 impl AppConfig {
@@ -36,7 +37,8 @@ pub enum ModLoader {
     Vanilla,
     Fabric,
     Spigot,
-    Forge
+    Forge,
+    NeoForge
 }
 
 impl ModLoader {
@@ -46,11 +48,21 @@ impl ModLoader {
             ModLoader::Fabric => "fabric",
             ModLoader::Spigot => "spigot",
             ModLoader::Forge => "forge",
+            ModLoader::NeoForge => "neoforge"
+        }
+    }
+    
+    pub fn to_curseforge_id(&self) -> i32 {
+        return match &self {
+            ModLoader::Fabric => 4,
+            ModLoader::Forge => 1,
+            ModLoader::NeoForge => 6,
+            _ => 0
         }
     }
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct ModMetadata {
     pub name: String,
     pub mod_id: String,
