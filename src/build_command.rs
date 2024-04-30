@@ -6,9 +6,9 @@ use crate::downloader::curseforge_mod_downloader::download_curseforge_mod;
 use crate::downloader::fabric_downloader::download_fabric_server;
 use crate::downloader::modrinth_mod_downloader::download_modrinth_mod;
 use crate::downloader::vanilla_downloader::download_vanilla_server;
-use crate::viewmodel::config::{AppConfig, ModLoader, ModProvider};
-use crate::viewmodel::download_mod_metadata::DownloadModMetadata;
-use crate::viewmodel::download_result::DownloadStatus;
+use crate::models::config::{AppConfig, ModLoader, ModProvider};
+use crate::models::download_mod_metadata::DownloadModMetadata;
+use crate::models::download_result::DownloadStatus;
 
 pub async fn build_all(skip_server: bool, force_mods: bool) -> anyhow::Result<()> {
     build_mods(force_mods).await?;
@@ -36,9 +36,9 @@ pub async fn build_server() -> anyhow::Result<()> {
 
 async fn build_mods(force: bool) -> anyhow::Result<()> {
     let config = AppConfig::load();
-    
+
     *CURSEFORGE_API_TOKEN.lock().unwrap() = config.curse_api_key.clone();
-    
+
     println!("{}", "Downloading mods".bold());
     let mut handles = vec![];
     for mc_mod in config.mods {
@@ -53,7 +53,7 @@ async fn build_mods(force: bool) -> anyhow::Result<()> {
             game_version,
             sides: mc_mod.sides,
         };
-        
+
         handles.push(task::spawn(async move {
             return match mc_mod.provider {
                 ModProvider::Modrinth => {

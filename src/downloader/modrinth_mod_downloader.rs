@@ -1,8 +1,8 @@
 use colored::Colorize;
 
 use crate::downloader::universal_downloader::download_file;
-use crate::viewmodel::download_mod_metadata::DownloadModMetadata;
-use crate::viewmodel::download_result::{DownloadResult, DownloadStatus};
+use crate::models::download_mod_metadata::DownloadModMetadata;
+use crate::models::download_result::{DownloadResult, DownloadStatus};
 
 pub async fn download_modrinth_mod(metadata: DownloadModMetadata, force: bool) -> anyhow::Result<DownloadResult> {
     let response = reqwest::get(format!("https://api.modrinth.com/v2/project/{}/version?loaders=[\"{}\"]&game_versions=[\"{}\"]", metadata.mod_id, metadata.mod_loader.to_string(), metadata.game_version))

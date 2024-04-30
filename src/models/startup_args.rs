@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand};
-use crate::viewmodel::config::{ModLoader, ModProvider, ModTargetSide};
+use crate::models::config::{ModLoader, ModProvider, ModTargetSide};
 
 #[derive(Parser, Debug)]
 #[command(author = "Jeb Feng", version = "0.1", about = "A designer for Minecraft server", long_about = None)]

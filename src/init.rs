@@ -1,5 +1,5 @@
 use std::{env, fs};
-use crate::viewmodel::config::{AppConfig, ModLoader};
+use crate::models::config::{AppConfig, ModLoader};
 
 use anyhow::Result;
 

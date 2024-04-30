@@ -3,8 +3,8 @@ use std::env;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use crate::viewmodel::config::ModTargetSide;
-use crate::viewmodel::download_result::DownloadStatus;
+use crate::models::config::ModTargetSide;
+use crate::models::download_result::DownloadStatus;
 
 #[derive(Debug, Copy, Clone)]
 pub struct UniversalDownloadResult {
