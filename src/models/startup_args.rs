@@ -35,18 +35,16 @@ pub enum ModCommand {
 
 #[derive(Args, Debug)]
 pub struct AddModCommand {
-    #[arg(short, long, required = true, help = "The name of the mod")]
-    pub name: String,
+    #[arg(short, long, required = false, help = "The name of the mod")]
+    pub name: Option<String>,
     #[arg(short, long, required = true, help = "The mod id bind with download source")]
     pub id: String,
-    #[arg(short, long, required = true, help = "Version of the mod")]
-    pub version: String,
-    #[arg(short, long, required = true, help = "Mod loader for the mod")]
-    pub loader: ModLoader,
+    #[arg(short, long, required = false, help = "Version of the mod")]
+    pub version: Option<String>,
     #[arg(short, long, required = true, help = "The provider of the mod (Support CurseForge and Modrinth)")]
     pub provider: ModProvider,
-    #[arg(short, long, required = true, help = "Which side should the mod be installed on")]
-    pub side: Vec<ModTargetSide>
+    #[arg(short, long, required = false, help = "Which side should the mod be installed on")]
+    pub side: Option<Vec<ModTargetSide>>
 }
 
 #[derive(Args, Debug)]
