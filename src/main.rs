@@ -7,7 +7,7 @@ use anyhow::Result;
 use java_locator::locate_java_home;
 use lazy_static::lazy_static;
 use crate::build_command::build_all;
-use crate::mod_command::add_mod;
+use crate::mod_command::{add_mod, list_mods, remove_mod};
 
 #[cfg(test)]
 mod test;
@@ -47,7 +47,9 @@ async fn main() -> Result<()> {
         }
         Commands::Mod(param) => {
             match param {
-                ModCommand::Add(mod_to_add) => add_mod(mod_to_add).await?
+                ModCommand::Add(mod_to_add) => add_mod(mod_to_add).await?,
+                ModCommand::List => list_mods(),
+                ModCommand::Remove(mod_to_remove) => remove_mod(mod_to_remove.id),
             }
         }
         Commands::Build(x) => build_all(x.skip_server, x.force_download).await?
