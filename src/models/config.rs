@@ -1,8 +1,10 @@
 use std::{env, fs};
 use std::fs::File;
 use std::io::Write;
+
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
+
 use crate::CURSEFORGE_API_TOKEN;
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
@@ -77,14 +79,23 @@ pub struct ModMetadata {
     pub sides: Vec<ModTargetSide>
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum, strum_macros::Display)]
 pub enum ModProvider {
     Modrinth,
     CurseForge
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum, strum_macros::Display)]
 pub enum ModTargetSide {
     Client,
     Server
+}
+
+impl ModTargetSide {
+    pub fn to_string(&self) -> &str {
+        return match &self {
+            ModTargetSide::Client => "Client",
+            ModTargetSide::Server => "Server"
+        }
+    }
 }

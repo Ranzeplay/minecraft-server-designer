@@ -30,7 +30,11 @@ pub struct InitCommand {
 #[derive(Subcommand, Debug)]
 pub enum ModCommand {
     #[clap(about = "Add mod to current configuration")]
-    Add(AddModCommand)
+    Add(AddModCommand),
+    #[clap(about = "List all added mods")]
+    List,
+    #[clap(about = "Remove a mod from the added mod")]
+    Remove(RemoveModCommand)
 }
 
 #[derive(Args, Debug)]
@@ -45,6 +49,12 @@ pub struct AddModCommand {
     pub provider: ModProvider,
     #[arg(short, long, required = false, help = "Which side should the mod be installed on")]
     pub side: Option<Vec<ModTargetSide>>
+}
+
+#[derive(Args, Debug)]
+pub struct RemoveModCommand {
+    #[arg(short, long, required = true, help = "The mod id bind with download source")]
+    pub id: String,
 }
 
 #[derive(Args, Debug)]
