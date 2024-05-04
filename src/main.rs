@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Mutex;
 use clap::Parser;
 use crate::init::init_all;
@@ -22,11 +23,14 @@ mod universal_downloader;
 
 lazy_static! {
     pub static ref CURSEFORGE_API_TOKEN: Mutex<String> = Mutex::new(String::new());
+    pub static ref CONFIG_FILE_PATH: Mutex<PathBuf> = Mutex::new(PathBuf::new());
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = StartupArgs::parse();
+    
+    *CONFIG_FILE_PATH.lock().unwrap() = PathBuf::from(&args.config_path);
 
     // Check Java installation
     locate_java_home()
