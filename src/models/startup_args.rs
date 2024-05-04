@@ -5,7 +5,10 @@ use crate::models::config::{ModLoader, ModProvider, ModTargetSide};
 #[command(author = "Jeb Feng", version = "0.1", about = "A designer for Minecraft server", long_about = None)]
 pub struct StartupArgs {
     #[command(subcommand)]
-    pub command: Commands
+    pub command: Commands,
+    
+    #[arg(short ='c', long = "config", help = "The configuration file path", default_value = "./config.yml")]
+    pub config_path: String
 }
 
 #[derive(Subcommand, Debug)]

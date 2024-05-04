@@ -5,7 +5,7 @@ use std::io::Write;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
-use crate::CURSEFORGE_API_TOKEN;
+use crate::{CONFIG_FILE_PATH, CURSEFORGE_API_TOKEN};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct AppConfig {
@@ -17,7 +17,7 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn load() -> AppConfig {
-        let config_path = &env::current_dir().unwrap().join("config.yml");
+        let config_path = CONFIG_FILE_PATH.lock().unwrap().clone();
         let config_content = fs::read_to_string(config_path)
             .expect("Failed to read config file");
         

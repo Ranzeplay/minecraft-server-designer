@@ -2,6 +2,7 @@ use prettytable::{row, Table};
 use crate::models::config::{AppConfig, ModMetadata, ModProvider};
 use crate::models::startup_args::AddModCommand;
 use crate::providers::curseforge_provider::CurseForgeProvider;
+use crate::providers::local_provider::LocalProvider;
 use crate::providers::modrinth_provider::ModrinthProvider;
 
 pub async fn add_mod(mod_to_add: AddModCommand) -> anyhow::Result<()> {
@@ -48,6 +49,14 @@ pub async fn add_mod(mod_to_add: AddModCommand) -> anyhow::Result<()> {
             if metadata.version.is_empty() {
                 metadata.version = fetched_data.version;
             }
+        }
+        ModProvider::Local => {
+            let data = LocalProvider::get_mod_metadata(metadata.clone(), &config)
+                .await
+                .expect("Failed to fetch mod metadata");
+            
+            metadata.mod_id = data.mod_id;
+            metadata.sides = data.sides;
         }
     }
     

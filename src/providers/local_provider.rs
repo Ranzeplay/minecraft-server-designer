@@ -1,7 +1,7 @@
 use std::env;
 use std::path::Path;
 
-use crate::models::config::ModTargetSide;
+use crate::models::config::{AppConfig, ModMetadata, ModProvider, ModTargetSide};
 use crate::models::download_mod_metadata::DownloadModMetadata;
 use crate::models::download_result::{DownloadResult, DownloadStatus};
 
@@ -39,6 +39,19 @@ impl LocalProvider {
                 description: "Mod not found",
                 status: DownloadStatus::Failed,
             })
+        }
+    }
+
+    pub async fn get_mod_metadata(mut metadata: ModMetadata, _config: &AppConfig) -> anyhow::Result<ModMetadata, String> {
+        let file_result = Path::new(&metadata.mod_id);
+        if file_result.exists() {
+            metadata.name = file_result.file_name().unwrap().to_str().unwrap().to_string();
+            metadata.sides = vec![ModTargetSide::Client, ModTargetSide::Server];
+            metadata.version = "latest".to_string();
+            metadata.provider = ModProvider::Local;
+            Ok(metadata)
+        } else {
+            Err("Mod not found".to_string())
         }
     }
 }
