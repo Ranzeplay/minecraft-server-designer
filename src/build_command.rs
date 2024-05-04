@@ -7,6 +7,7 @@ use crate::models::config::{AppConfig, ModLoader, ModProvider};
 use crate::models::download_mod_metadata::DownloadModMetadata;
 use crate::models::download_result::DownloadStatus;
 use crate::providers::curseforge_provider::CurseForgeProvider;
+use crate::providers::local_provider::LocalProvider;
 use crate::providers::modrinth_provider::ModrinthProvider;
 
 pub async fn build_all(skip_server: bool, force_mods: bool) -> anyhow::Result<()> {
@@ -60,6 +61,11 @@ async fn build_mods(force: bool) -> anyhow::Result<()> {
                 }
                 ModProvider::CurseForge => {
                     let result = CurseForgeProvider::download_mod(metadata, force).await.unwrap();
+                    result.display_text();
+                    anyhow::Ok(result)
+                }
+                ModProvider::Local => {
+                    let result = LocalProvider::download_mod(metadata, force).await.unwrap();
                     result.display_text();
                     anyhow::Ok(result)
                 }

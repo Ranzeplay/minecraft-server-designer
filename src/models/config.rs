@@ -82,7 +82,8 @@ pub struct ModMetadata {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum, strum_macros::Display)]
 pub enum ModProvider {
     Modrinth,
-    CurseForge
+    CurseForge,
+    Local
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, ValueEnum, strum_macros::Display)]
