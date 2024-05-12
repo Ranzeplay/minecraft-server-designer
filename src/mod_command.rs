@@ -64,6 +64,8 @@ pub async fn add_mod(mod_to_add: AddModCommand) -> anyhow::Result<()> {
 
     config.save().expect("Failed to save configurations");
     
+    println!("Mod added successfully");
+    
     Ok(())
 }
 
@@ -78,6 +80,7 @@ pub fn list_mods() {
     }
     
     table.printstd();
+    println!("Showing {} mods", table.len());
 }
 
 pub fn remove_mod(id: String) {
