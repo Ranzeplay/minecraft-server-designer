@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 
@@ -31,8 +31,8 @@ impl AppConfig {
 
     pub fn save(&self) -> anyhow::Result<()> {
         let content = serde_yaml::to_string(&self)?;
-        let path = env::current_dir().unwrap().join("config.yml");
-        let mut file = File::create(path)?;
+        let config_path = CONFIG_FILE_PATH.lock().unwrap().clone();
+        let mut file = File::create(config_path)?;
         file.write_all(content.as_bytes())?;
 
         Ok(())
