@@ -19,7 +19,7 @@ pub enum Commands {
     #[clap(about = "Manage mods used in the server and client")]
     Mod(ModCommand),
     #[clap(about = "Build current configuration")]
-    Build(BuildCommand)
+    Build(BuildCommand),
 }
 
 #[derive(Args, Debug)]
@@ -37,7 +37,9 @@ pub enum ModCommand {
     #[clap(about = "List all added mods")]
     List,
     #[clap(about = "Remove a mod from the added mod")]
-    Remove(RemoveModCommand)
+    Remove(RemoveModCommand),
+    #[clap(about = "Check for mod metadata")]
+    Check(CheckModCommand),
 }
 
 #[derive(Args, Debug)]
@@ -66,4 +68,10 @@ pub struct BuildCommand {
     pub skip_server: bool,
     #[arg(short, long, help = "Skip re-downloading mod files if they already exist", default_value_t = false)]
     pub force_download: bool
+}
+
+#[derive(Args, Debug)]
+pub struct CheckModCommand {
+    #[arg(short = 'v', long, help = "Check on specific game version")]
+    pub game_version: Option<String>,
 }

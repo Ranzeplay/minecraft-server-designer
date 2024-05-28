@@ -4,6 +4,8 @@ use crate::models::startup_args::AddModCommand;
 use crate::providers::curseforge_provider::CurseForgeProvider;
 use crate::providers::local_provider::LocalProvider;
 use crate::providers::modrinth_provider::ModrinthProvider;
+use colored::Colorize;
+use tokio::task;
 
 pub async fn add_mod(mod_to_add: AddModCommand) -> anyhow::Result<()> {
     let mut config = AppConfig::load();
@@ -96,3 +98,37 @@ pub fn remove_mod(id: String) {
     
     println!("Mod removed successfully");
 }
+
+
+
+pub async fn check_config(game_version: Option<String>) {
+    let mut config = AppConfig::load();
+    if game_version.is_some() {
+        config.game_version = game_version.unwrap();
+    }
+
+    let mut handles = vec![];
+    for mc_mod in config.clone().mods {
+        let config_cloned = config.clone();
+        handles.push(task::spawn(async move {
+            return match mc_mod.provider {
+                ModProvider::Modrinth => ModrinthProvider::get_mod_metadata(mc_mod.clone(), &config_cloned).await,
+                ModProvider::CurseForge => CurseForgeProvider::get_mod_metadata(mc_mod.clone(), &config_cloned).await,
+                _ => Ok(mc_mod.clone())
+            }
+        }));
+    }
+
+    let mut results = vec![];
+    for handle in handles {
+        let result = handle.await;
+        results.push(result.expect("Unexpected error when unpacking result"));
+    }
+
+    println!("{}", "Summary".bold());
+    println!("Total: {} | Success: {} | Fail: {}",
+             results.len(),
+             results.iter().filter(|r| r.is_ok()).count(),
+             results.iter().filter(|r| r.is_err()).count());
+}
+

@@ -8,7 +8,7 @@ use anyhow::Result;
 use java_locator::locate_java_home;
 use lazy_static::lazy_static;
 use crate::build_command::build_all;
-use crate::mod_command::{add_mod, list_mods, remove_mod};
+use crate::mod_command::{add_mod, check_config, list_mods, remove_mod};
 
 #[cfg(test)]
 mod test;
@@ -20,6 +20,7 @@ mod mod_command;
 mod build_command;
 mod providers;
 mod universal_downloader;
+mod check_command;
 
 lazy_static! {
     pub static ref CURSEFORGE_API_TOKEN: Mutex<String> = Mutex::new(String::new());
@@ -54,9 +55,10 @@ async fn main() -> Result<()> {
                 ModCommand::Add(mod_to_add) => add_mod(mod_to_add).await?,
                 ModCommand::List => list_mods(),
                 ModCommand::Remove(mod_to_remove) => remove_mod(mod_to_remove.id),
+                ModCommand::Check(mod_to_check) => check_config(mod_to_check.game_version).await,
             }
         }
-        Commands::Build(x) => build_all(x.skip_server, x.force_download).await?
+        Commands::Build(x) => build_all(x.skip_server, x.force_download).await?,
     }
 
     Ok(())
