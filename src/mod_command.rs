@@ -1,5 +1,5 @@
 use prettytable::{row, Table};
-use crate::models::config::{AppConfig, ModMetadata, ModProvider};
+use crate::models::config::{AppConfig, ModMetadata, ModProvider, ModTargetSide};
 use crate::models::startup_args::AddModCommand;
 use crate::providers::curseforge_provider::CurseForgeProvider;
 use crate::providers::local_provider::LocalProvider;
@@ -99,8 +99,6 @@ pub fn remove_mod(id: String) {
     println!("Mod removed successfully");
 }
 
-
-
 pub async fn check_config(game_version: Option<String>) {
     let mut config = AppConfig::load();
     if game_version.is_some() {
@@ -120,9 +118,20 @@ pub async fn check_config(game_version: Option<String>) {
     }
 
     let mut results = vec![];
-    for handle in handles {
+    let mut failed_mods = vec![];
+    for (i, handle) in handles.into_iter().enumerate() {
         let result = handle.await;
-        results.push(result.expect("Unexpected error when unpacking result"));
+        match result {
+            Ok(Ok(_)) => results.push(Ok(())),
+            Ok(Err(e)) => {
+                results.push(Err(()));
+                failed_mods.push((config.mods[i].clone(), e.to_string()));
+            },
+            Err(e) => {
+                results.push(Err(()));
+                failed_mods.push((config.mods[i].clone(), e.to_string()));
+            }
+        }
     }
 
     println!("{}", "Summary".bold());
@@ -130,5 +139,12 @@ pub async fn check_config(game_version: Option<String>) {
              results.len(),
              results.iter().filter(|r| r.is_ok()).count(),
              results.iter().filter(|r| r.is_err()).count());
+
+    if !failed_mods.is_empty() {
+        println!("\n{}", "Failed Mods:".bold().red());
+        for (mod_meta, error) in failed_mods {
+            println!("{} ({}): {}", mod_meta.name.bold(), mod_meta.provider, error);
+        }
+    }
 }
 

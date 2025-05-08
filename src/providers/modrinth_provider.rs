@@ -41,12 +41,21 @@ impl ModrinthProvider {
     }
 
     pub async fn get_mod_metadata(mut metadata: ModMetadata, config: &AppConfig) -> anyhow::Result<ModMetadata, String> {
-        let response = reqwest::get(format!("https://api.modrinth.com/v2/project/{}", metadata.mod_id))
-            .await
-            .expect("Failed to fetch mod metadata from Modrinth")
-            .json::<serde_json::Value>()
-            .await
-            .expect("Failed to parse mod metadata from Modrinth");
+        let response = match reqwest::get(format!("https://api.modrinth.com/v2/project/{}", metadata.mod_id)).await {
+            Ok(resp) => {
+                if !resp.status().is_success() {
+                    return Err(format!("Failed to fetch mod metadata for mod ID {}: HTTP status code {}", 
+                        metadata.mod_id, resp.status().as_u16()));
+                }
+                resp
+            },
+            Err(e) => return Err(format!("Failed to fetch mod metadata for mod ID {}: {}", metadata.mod_id, e)),
+        };
+
+        let response = match response.json::<serde_json::Value>().await {
+            Ok(json) => json,
+            Err(e) => return Err(format!("Failed to parse mod metadata for mod ID {}: {}", metadata.mod_id, e)),
+        };
         
         let versions: Vec<String> = response["game_versions"].as_array().unwrap().iter().map(|version| version.as_str().unwrap().to_string()).collect();
         if !versions.contains(&config.game_version) {
