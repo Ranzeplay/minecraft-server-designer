@@ -35,7 +35,7 @@ pub enum ModCommand {
     #[clap(about = "Add mod to current configuration")]
     Add(AddModCommand),
     #[clap(about = "List all added mods")]
-    List,
+    List(ListModCommand),
     #[clap(about = "Remove a mod from the added mod")]
     Remove(RemoveModCommand),
     #[clap(about = "Check for mod metadata")]
@@ -74,4 +74,10 @@ pub struct BuildCommand {
 pub struct CheckModCommand {
     #[arg(short = 'v', long, help = "Check on specific game version")]
     pub game_version: Option<String>,
+}
+
+#[derive(Args, Debug)]
+pub struct ListModCommand {
+    #[arg(short, long, help = "Filter mods by side (client/server)")]
+    pub side: Option<ModTargetSide>,
 }

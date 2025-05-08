@@ -53,7 +53,7 @@ async fn main() -> Result<()> {
         Commands::Mod(param) => {
             match param {
                 ModCommand::Add(mod_to_add) => add_mod(mod_to_add).await?,
-                ModCommand::List => list_mods(),
+                ModCommand::List(list_params) => list_mods(list_params.side),
                 ModCommand::Remove(mod_to_remove) => remove_mod(mod_to_remove.id),
                 ModCommand::Check(mod_to_check) => check_config(mod_to_check.game_version).await,
             }
