@@ -71,12 +71,19 @@ pub async fn add_mod(mod_to_add: AddModCommand) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn list_mods() {
+pub fn list_mods(side_filter: Option<ModTargetSide>) {
     let mods = AppConfig::load().mods;
 
     let mut table = Table::new();
     table.add_row(row![b->"Mod ID", b->"Name", b->"Provider", b->"Version", b->"Sides"]);
-    for mod_meta in mods {
+    
+    let filtered_mods: Vec<&ModMetadata> = if let Some(side) = side_filter {
+        mods.iter().filter(|mod_meta| mod_meta.sides.contains(&side)).collect()
+    } else {
+        mods.iter().collect()
+    };
+
+    for mod_meta in filtered_mods {
         let side_string = mod_meta.sides.iter().map(|side| side.to_string()).collect::<Vec<&str>>().join(" ");
         table.add_row(row![mod_meta.mod_id, mod_meta.name, mod_meta.provider, mod_meta.version, side_string]);
     }
