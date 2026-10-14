@@ -21,7 +21,7 @@ impl AppConfig {
         let config_content = fs::read_to_string(config_path)
             .expect("Failed to read config file");
         
-        let parsed_config: AppConfig = serde_yaml::from_str(&config_content)
+        let parsed_config: AppConfig = yaml_serde::from_str(&config_content)
             .expect("Failed to parse config file");
 
         *CURSEFORGE_API_TOKEN.lock().unwrap() = parsed_config.curse_api_key.clone();
@@ -30,7 +30,7 @@ impl AppConfig {
     }
 
     pub fn save(&self) -> anyhow::Result<()> {
-        let content = serde_yaml::to_string(&self)?;
+        let content = yaml_serde::to_string(&self)?;
         let config_path = CONFIG_FILE_PATH.lock().unwrap().clone();
         let mut file = File::create(config_path)?;
         file.write_all(content.as_bytes())?;
